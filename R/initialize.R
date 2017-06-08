@@ -85,7 +85,12 @@ sd_startShiny <- function(self, private, path) {
     paste(
       sep = ";",
       ".libPaths(c(%s, .libPaths()))",
-      "shiny::runApp('%s', test.mode=TRUE)"
+      if (private$coverage) {
+        paste(sep = ";", "reg.finalizer(asNamespace('shiny'), function(...) { covr:::save_trace('.') }, onexit = TRUE)",
+          "covr:::shiny_coverage(shiny::runApp('%s', test.mode = TRUE))")
+      } else {
+        "shiny::runApp('%s', test.mode=TRUE)"
+      }
     ),
     libpath,
     path

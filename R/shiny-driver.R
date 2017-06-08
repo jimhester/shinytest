@@ -336,6 +336,7 @@ ShinyDriver <- R6Class(
     snapshotCount = 0,
     shinyWorkerId = NA_character_,
     eventLog = list(),
+    coverage = TRUE,
 
     startShiny = function(path)
       sd_startShiny(self, private, path),
@@ -407,7 +408,7 @@ sd_stop <- function(self, private) {
   # If the app is being hosted locally, kill the process.
   if (!is.null(private$shinyProcess)) {
     self$logEvent("Killing Shiny process")
-    private$shinyProcess$kill()
+    private$shinyProcess$signal(2)
   }
 
   private$state <- "stopped"
